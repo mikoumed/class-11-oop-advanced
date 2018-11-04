@@ -4,9 +4,16 @@ class OrderedDict:
         self._values = []
     
     def __setitem__(self, key, value):
-        self._keys.append(key)
-        self._values.append(value)
-        
+        if key in self._keys:
+            for k, v in enumerate(self._keys):
+                if v == key:
+                    self._values[k] = value
+        else:
+            self._keys.append(key)
+            self._values.append(value)
+
+
+
     def __getitem__(self, a_key):
         for k, v in zip(self._keys, self._values):
             if k == a_key:
@@ -31,7 +38,14 @@ class OrderedDict:
         return True
         
     def __ne__(self,other):
-        return not self == other
+        # return not self == other
+        for k, v in zip(self._keys, other._keys):
+            if k != v:
+                return True
+        for k, v in zip(self._values, other._values):
+            if k != v:
+                return True
+        return False
         
     def __str__(self):
         s = '{'
@@ -40,6 +54,13 @@ class OrderedDict:
         s = s.rstrip(', ')
         s += '}'
         return s
+    
+    def __delitem__(self,item):
+        for k, v in zip(self._keys, self._values):
+            if k == item:
+                self._keys.remove(item)
+                self._values.remove(v)
+        
         
     __repr__ = __str__
     
@@ -48,9 +69,11 @@ class OrderedDict:
         for k, v in self.items():
             new[k] = v
         for k, v in other.items():
+            if k in new:
+                del new[k] 
             new[k] = v
         return new
-        
+
         
     @classmethod
     def from_keys(cls, item):
@@ -71,5 +94,4 @@ class OrderedDict:
         for k, v in zip(self._keys, self._values):
             items.append((k, v))
         return items
-
-
+        
